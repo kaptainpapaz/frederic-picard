@@ -1,0 +1,52 @@
+# Développement local, sur le poste : l'app + PostgreSQL, en HTTP sur http://localhost:3000
+#
+#   docker compose -f docker-compose.dev.yml up --build
+#   puis, une seule fois, le seed (compte admin + textes par défaut) :
+#   docker compose -f docker-compose.dev.yml exec web node node_modules/tsx/dist/cli.mjs prisma/seed.ts
+#
+#   Site : http://localhost:3000/fr    Admin : http://localhost:3000/admin
+#   Compte initial : ADMIN_INITIAL_EMAIL / ADMIN_INITIAL_PASSWORD ci-dessous.
+#
+# Ce fichier ne décrit PAS la production (règle A3) : voir docker-compose.yml.
+
+services:
+  web:
+    build: .
+    container_name: frederic-picard-dev
+    command: sh -c "node node_modules/prisma/build/index.js migrate deploy && node server.js"
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: postgresql://app:app@db:5432/fp
+      AUTH_URL: http://localhost:3000
+      AUTH_TRUST_HOST: 'true'
+      AUTH_SECRET: dev-secret-change-me-dev-secret-change-me
+      ADMIN_INITIAL_EMAIL: admin@exemple.fr
+      ADMIN_INITIAL_PASSWORD: admin1234
+      EMAIL_PROVIDER: log
+      EMAIL_FROM: site@localhost
+      UPLOADS_DIR: /app/uploads
+    volumes:
+      - uploads-dev:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:17-alpine
+    container_name: frederic-picard-dev-db
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: fp
+    volumes:
+      - pgdata-dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U app -d fp']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata-dev:
+  uploads-dev:

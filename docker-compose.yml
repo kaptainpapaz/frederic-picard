@@ -1,0 +1,84 @@
+# Compose de production.
+#
+# ATTENTION (regle A3) : si ce fichier est un jour modifie directement sur le serveur,
+# il devient le fichier qui fait foi et celui-ci devient un piege actif. Un agent s'est
+# fait prendre le 04/08/2026 par un compose versionne decrivant une topologie qui
+# n'avait jamais ete celle de la production. En cas de divergence assumee, le signaler
+# en PREMIERE LIGNE de ce fichier et dans le CLAUDE.md du projet.
+
+services:
+  web:
+    build: .
+    container_name: ${PROJECT_NAME}
+    restart: unless-stopped
+    # Regle C5 : les migrations tournent au demarrage, donc la verification de
+    # deploiement inclut la lecture des journaux dans l'ordre attendu : la ligne de
+    # migration DOIT apparaitre avant que Next annonce qu'il est pret. Un conteneur qui
+    # repond ne prouve pas que la migration a eu lieu.
+    command: sh -c "node node_modules/prisma/build/index.js migrate deploy && node server.js"
+    environment:
+      # Regle B5 : tout ce qui est ici est lu au DEMARRAGE. Les NEXT_PUBLIC_* sont
+      # figees au build et n'ont rien a faire dans cette section.
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      VIRTUAL_HOST: ${DOMAIN}
+      LETSENCRYPT_HOST: ${DOMAIN}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
+      VIRTUAL_PORT: 3000
+      # Auth (règle E1) : URL publique, confiance à l'hôte ; X-Forwarded-Proto est relayé par nginx-proxy.
+      AUTH_URL: https://${DOMAIN}
+      AUTH_TRUST_HOST: 'true'
+      AUTH_SECRET: ${AUTH_SECRET}
+      ADMIN_INITIAL_EMAIL: ${ADMIN_INITIAL_EMAIL}
+      ADMIN_INITIAL_PASSWORD: ${ADMIN_INITIAL_PASSWORD}
+      # Email
+      EMAIL_PROVIDER: ${EMAIL_PROVIDER}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      EMAIL_FROM: ${EMAIL_FROM}
+      # Médias (règle G1) : le volume, jamais le dépôt.
+      UPLOADS_DIR: /app/uploads
+    volumes:
+      # Regle G1 : les fichiers televerses ne vivent JAMAIS dans le depot. Ni dans
+      # public/, ni ailleurs sous git. Un git pull les ferait disparaitre.
+      # Regle D1 : ce volume entre dans le perimetre de sauvegarde LE JOUR OU il est
+      # cree. Voir scripts/backup-db.sh.
+      - uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - proxy-network
+      - internal
+
+  db:
+    image: postgres:17-alpine
+    container_name: ${PROJECT_NAME}-db
+    restart: unless-stopped
+    # Regle C7 : AUCUNE section `ports:`. Meme limitee a 127.0.0.1.
+    # C'est ce qui garantit que la base n'est joignable que depuis le reseau interne.
+    # Controle apres chaque intervention : `ss -tlnp | grep 5432` ne retourne rien.
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - internal
+
+volumes:
+  pgdata:
+  uploads:
+
+networks:
+  proxy-network:
+    external: true
+  internal:
+    internal: true

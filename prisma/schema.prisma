@@ -1,0 +1,230 @@
+// Arbitrage n°2 : PostgreSQL partout.
+// Prisma 7 : generator "prisma-client" (TypeScript, ESM), sortie ignorée par git.
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+// Prisma 7 : plus de `url` ici. L'URL de migration vit dans prisma.config.ts,
+// l'application passe par @prisma/adapter-pg. Voir src/lib/db.ts et règle A1.
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Identité et droits (socle). Un seul compte en pratique, le modèle reste celui du socle.
+// ---------------------------------------------------------------------------
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  passwordHash String?
+  name         String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  roles        UserRole[]
+
+  @@index([email])
+}
+
+model Role {
+  id          String           @id @default(cuid())
+  key         String           @unique
+  labelKey    String
+  users       UserRole[]
+  permissions RolePermission[]
+}
+
+// Règle E3 : UN SEUL point de déclaration, src/lib/rbac.ts. Le seed reporte ici.
+model Permission {
+  id       String           @id @default(cuid())
+  key      String           @unique
+  domain   String
+  labelKey String
+  roles    RolePermission[]
+}
+
+model UserRole {
+  userId String
+  roleId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+// ---------------------------------------------------------------------------
+// Métier : séries, photos, tirages
+// ---------------------------------------------------------------------------
+
+enum SerieStatus {
+  DRAFT
+  PUBLISHED
+  ONGOING
+}
+
+/// Une série = une session de travail ou d'inspiration. L'ordre d'affichage est `order`.
+model Serie {
+  id           String      @id @default(cuid())
+  slug         String      @unique
+  title        String
+  year         Int?
+  intro        String      @default("")
+  status       SerieStatus @default(DRAFT)
+  /// Mise en avant sur l'accueil (« Dernière série »). Une seule à la fois, garanti par l'action.
+  featured     Boolean     @default(false)
+  order        Int         @default(0)
+  coverPhotoId String?
+  photos       Photo[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@index([status, order])
+}
+
+/// Une photo. Toujours affichée en 16:9 : le fichier original est conservé, les variantes
+/// 16:9 sont générées au téléversement avec le recadrage (cropX, cropY) choisi dans l'admin.
+/// `serieId` nul = photo hors série (hero de l'accueil, photo d'atelier).
+model Photo {
+  id             String    @id @default(cuid())
+  serieId        String?
+  serie          Serie?    @relation(fields: [serieId], references: [id], onDelete: Cascade)
+  title          String    @default("")
+  place          String    @default("")
+  order          Int       @default(0)
+  /// Clé de fichier (sans extension), les variantes suivent la convention de src/lib/media.ts.
+  fileKey        String    @unique
+  originalWidth  Int
+  originalHeight Int
+  /// Centre du recadrage, de 0 à 1. 0.5 / 0.5 = centré.
+  cropX          Float     @default(0.5)
+  cropY          Float     @default(0.5)
+  /// Pleine largeur sur la page de série (sinon demi-largeur).
+  wide           Boolean   @default(false)
+  tirages        Tirage[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([serieId, order])
+}
+
+enum TirageStatus {
+  AVAILABLE
+  RESERVED
+  SOLD
+  HIDDEN
+}
+
+/// Un tirage déjà imprimé : une photo, un format, un numéro d'édition, un prix.
+model Tirage {
+  id            String       @id @default(cuid())
+  photoId       String
+  photo         Photo        @relation(fields: [photoId], references: [id], onDelete: Cascade)
+  format        String
+  paper         String       @default("")
+  editionSize   Int
+  editionNumber Int
+  /// Prix TTC en centimes d'euro. Jamais de flottant pour un montant.
+  priceCents    Int
+  status        TirageStatus @default(AVAILABLE)
+  note          String       @default("")
+  order         Int          @default(0)
+  messages      Message[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([status, order])
+}
+
+// ---------------------------------------------------------------------------
+// Contenu des pages et informations (JSON validé par Zod, voir src/lib/content.ts)
+// ---------------------------------------------------------------------------
+
+model SiteContent {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Messages : contact et demandes de tirage (la boutique est un échange d'emails)
+// ---------------------------------------------------------------------------
+
+enum MessageKind {
+  CONTACT
+  ORDER
+}
+
+enum MessageStatus {
+  NEW
+  ANSWERED
+  ARCHIVED
+}
+
+/// Rétention : conservé tant que Fred ne l'archive ou ne le supprime pas (données clients).
+model Message {
+  id        String        @id @default(cuid())
+  kind      MessageKind
+  status    MessageStatus @default(NEW)
+  name      String
+  email     String
+  subject   String        @default("")
+  body      String
+  tirageId  String?
+  tirage    Tirage?       @relation(fields: [tirageId], references: [id], onDelete: SetNull)
+  ip        String?
+  createdAt DateTime      @default(now())
+
+  @@index([status, createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// Journalisation (socle). Règle C6 : chaque table naît avec sa rétention.
+// ---------------------------------------------------------------------------
+
+/// Rétention : 365 jours.
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  action    String
+  entity    String
+  entityId  String?
+  payload   Json?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([entity, entityId])
+}
+
+/// Rétention : 90 jours. Règle F1 : écrit APRÈS le commit, jamais dedans.
+model SideEffectLog {
+  id        String   @id @default(cuid())
+  name      String
+  status    String
+  error     String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([status])
+}
+
+/// Rétention : 90 jours.
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  email     String
+  success   Boolean
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([email])
+}

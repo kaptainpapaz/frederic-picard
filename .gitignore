@@ -1,0 +1,31 @@
+node_modules/
+.next/
+out/
+build/
+.env
+.env.local
+.env.*.local
+*.tsbuildinfo
+next-env.d.ts
+
+# Regle B2 : aucune base de developpement dans le depot. La commiter pour nourrir le
+# prerender transforme un echec bruyant en pages publiques servant des donnees de demo.
+*.db
+*.sqlite
+*.sqlite3
+
+# Regle G1 : les fichiers televerses vivent dans un volume, jamais sous git.
+/uploads/
+/public/uploads/
+
+# Secrets
+*.pem
+*.key
+/secrets/
+
+/backups/
+/logs/
+/src/generated/
+
+# Règle G1 : fichiers téléversés hors du dépôt
+uploads/

@@ -1,0 +1,318 @@
+{
+  "app": {
+    "title": "Frédéric Picard, photographe",
+    "description": "Séries photographiques et tirages signés, numérotés."
+  },
+  "nav": {
+    "series": "Séries",
+    "prints": "Tirages",
+    "contact": "Contact",
+    "legal": "Mentions légales",
+    "terms": "CGV",
+    "privacy": "Confidentialité"
+  },
+  "home": {
+    "contactMe": "Me contacter",
+    "latestSerie": "Dernière série",
+    "allSeries": "Toutes les séries",
+    "viewSerie": "Voir la série",
+    "serieMeta": "{year} · {count, plural, =1 {1 photographie} other {# photographies}}",
+    "prints": "Tirages",
+    "allPrints": "Toute la boutique",
+    "edition": "Édition de {size} · n° {n}",
+    "approach": "La démarche",
+    "write": "Écrire à Frédéric"
+  },
+  "series": {
+    "eyebrow": "Le travail",
+    "title": "Séries",
+    "lead": "Chaque série est une session de travail ou une inspiration suivie jusqu'au bout. Les images y sont présentées dans l'ordre où elles ont été faites.",
+    "meta": "{year} · {status, select, ONGOING {en cours} other {{count, plural, =1 {1 photographie} other {# photographies}}}}",
+    "printsAvailable": "Tirages disponibles",
+    "empty": "Les premières séries arrivent bientôt."
+  },
+  "serie": {
+    "back": "Toutes les séries",
+    "meta": "Série · {year} · {status, select, ONGOING {en cours} other {{count, plural, =1 {1 photographie} other {# photographies}}}}",
+    "printsOfSerie": "Tirages de cette série",
+    "printAvailable": "tirage disponible"
+  },
+  "shop": {
+    "eyebrow": "Boutique",
+    "title": "Tirages",
+    "all": "Tous",
+    "empty": "Aucun tirage disponible pour le moment.",
+    "edition": "Édition de {size} · n° {n}",
+    "status": {
+      "AVAILABLE": "Disponible",
+      "RESERVED": "Réservé",
+      "SOLD": "Vendu"
+    },
+    "close": "Fermer",
+    "request": "Demander ce tirage",
+    "requested": "Votre demande est envoyée. Frédéric vous répond par email."
+  },
+  "contact": {
+    "title": "Contact",
+    "reply": "Réponse {delay}.",
+    "email": "Email",
+    "phone": "Téléphone",
+    "city": "Atelier",
+    "sent": "Message envoyé. Merci, je vous réponds rapidement."
+  },
+  "legal": {
+    "mentions": "Mentions légales",
+    "cgv": "Conditions générales de vente",
+    "privacy": "Politique de confidentialité",
+    "empty": "Ce texte sera publié prochainement."
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "text": "Cette page n'existe pas ou n'est plus en ligne.",
+    "home": "Retour à l'accueil"
+  },
+  "forms": {
+    "name": "Nom",
+    "email": "Email",
+    "subject": "Sujet",
+    "message": "Message",
+    "messageOptional": "Message (facultatif)",
+    "send": "Envoyer",
+    "sending": "Envoi…",
+    "errors": {
+      "required": "Ce champ est obligatoire.",
+      "email": "Adresse email invalide.",
+      "tooShort": "Un peu plus de détails, s'il vous plaît.",
+      "tooLong": "Texte trop long.",
+      "spam": "Envoi refusé."
+    }
+  },
+  "errors": {
+    "unauthorized": "Vous devez être connecté pour effectuer cette action.",
+    "forbidden": "Vous n'avez pas les droits nécessaires.",
+    "notFound": "Élément introuvable.",
+    "validation": "Certains champs sont invalides.",
+    "conflict": "Cet élément a été modifié entre-temps. Rechargez la page et réessayez.",
+    "capacityExceeded": "Il ne reste pas assez de places.",
+    "unexpected": "Une erreur est survenue. Réessayez dans un instant.",
+    "notNotified": "L'état a bien changé, mais aucun message n'a été envoyé : le texte n'a pas encore été validé.",
+    "tooMany": "Trop de messages envoyés depuis cette connexion. Réessayez dans une heure.",
+    "badCredentials": "Email ou mot de passe incorrect.",
+    "badPassword": "Mot de passe actuel incorrect.",
+    "passwordMismatch": "Les deux mots de passe ne correspondent pas.",
+    "passwordTooShort": "Le mot de passe doit faire au moins 10 caractères.",
+    "unsupportedFile": "Format de fichier non pris en charge (JPEG, PNG, WebP ou TIFF).",
+    "fileTooLarge": "Fichier trop lourd (40 Mo maximum).",
+    "slugTaken": "Ce slug est déjà utilisé par une autre série."
+  },
+  "emails": {
+    "messageReceived": { "subject": "Nouveau message depuis le site" },
+    "orderRequested": { "subject": "Nouvelle demande de tirage" }
+  },
+  "admin": {
+    "title": "Administration",
+    "login": {
+      "title": "Connexion",
+      "email": "Email",
+      "password": "Mot de passe",
+      "submit": "Se connecter",
+      "pending": "Connexion…"
+    },
+    "nav": {
+      "content": "Contenu",
+      "settings": "Réglages",
+      "dashboard": "Accueil",
+      "series": "Séries",
+      "prints": "Tirages",
+      "pages": "Pages du site",
+      "messages": "Messages",
+      "infos": "Mes informations",
+      "account": "Mon compte",
+      "viewSite": "Voir le site",
+      "signOut": "Se déconnecter",
+      "connected": "Connecté : {email}"
+    },
+    "dashboard": {
+      "hello": "Bonjour",
+      "title": "Votre site, en un coup d'œil",
+      "seriesCount": "{count, plural, =0 {aucune série publiée} =1 {1 série publiée} other {# séries publiées}} · {photos, plural, =1 {1 photo} other {# photos}}",
+      "printsCount": "{count, plural, =0 {aucun tirage en boutique} =1 {1 tirage en boutique} other {# tirages en boutique}}",
+      "newMessages": "{count, plural, =0 {aucun nouveau message} =1 {1 nouveau message} other {# nouveaux messages}}",
+      "whatToDo": "Que voulez-vous faire ?",
+      "newSerie": "Créer une série",
+      "newSerieHint": "Titre, introduction, photos dans l'ordre",
+      "newPrint": "Ajouter un tirage",
+      "newPrintHint": "Une photo, un format, un prix",
+      "heroPhoto": "Changer la photo d'accueil",
+      "heroPhotoHint": "Le hero de la première page",
+      "editPages": "Modifier une page du site",
+      "editPagesHint": "Textes d'accueil, démarche, contact, mentions",
+      "infos": "Mes informations",
+      "infosHint": "Email, téléphone, Instagram, ville",
+      "readMessages": "Lire les messages",
+      "readMessagesHint": "{count, plural, =0 {rien de nouveau} =1 {1 nouveau} other {# nouveaux}}",
+      "latestSeries": "Dernières séries",
+      "latestMessages": "Derniers messages"
+    },
+    "common": {
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "saved": "Enregistré.",
+      "delete": "Supprimer",
+      "confirmDelete": "Confirmer la suppression",
+      "cancel": "Annuler",
+      "back": "Retour",
+      "edit": "Modifier",
+      "new": "Nouveau",
+      "none": "Aucun",
+      "optional": "facultatif",
+      "yes": "Oui",
+      "no": "Non",
+      "preview": "Voir sur le site",
+      "up": "Monter",
+      "down": "Descendre"
+    },
+    "series": {
+      "title": "Séries",
+      "lead": "Votre travail, par sessions. L'ordre ici est l'ordre d'affichage sur le site.",
+      "new": "Nouvelle série",
+      "edit": "Modifier « {title} »",
+      "empty": "Aucune série pour l'instant. Créez la première.",
+      "draftNotice": "Brouillon : invisible sur le site tant que le statut n'est pas « Publiée »",
+      "fields": {
+        "title": "Titre",
+        "slug": "Adresse (slug)",
+        "slugHint": "Lettres minuscules, chiffres et tirets. Vide : déduit du titre.",
+        "year": "Année",
+        "status": "Statut",
+        "intro": "Introduction (deux ou trois lignes)",
+        "featured": "Mettre en avant sur la page d'accueil (« Dernière série »)",
+        "cover": "Photo de couverture",
+        "coverFirst": "Première photo de la série",
+        "order": "Ordre d'affichage"
+      },
+      "status": { "DRAFT": "Brouillon", "PUBLISHED": "Publiée", "ONGOING": "En cours (visible, incomplète)" },
+      "photos": {
+        "title": "Photos",
+        "count": "{count, plural, =0 {aucune photo} =1 {1 photo} other {# photos}}",
+        "hint": "Toutes les photos sont affichées en 16:9. Un fichier dans un autre format est recadré au centre ; ajustez le recadrage photo par photo.",
+        "drop": "Ajouter des photos",
+        "dropHint": "JPEG, PNG, WebP ou TIFF, la plus haute définition possible. Plusieurs fichiers à la fois.",
+        "upload": "Téléverser",
+        "uploading": "Téléversement…",
+        "photoTitle": "Titre",
+        "place": "Lieu ou date",
+        "wide": "Pleine largeur",
+        "crop": "Recadrage",
+        "cropX": "Horizontal",
+        "cropY": "Vertical",
+        "apply": "Appliquer",
+        "remove": "Retirer"
+      },
+      "meta": "{year} · {count, plural, =1 {1 photo} other {# photos}}"
+    },
+    "prints": {
+      "title": "Tirages",
+      "lead": "Les tirages déjà imprimés. Un tirage vendu reste visible comme « vendu » jusqu'à ce que vous le masquiez.",
+      "new": "Ajouter un tirage",
+      "edit": "Modifier le tirage",
+      "empty": "Aucun tirage. Ajoutez le premier.",
+      "noPhotos": "Ajoutez d'abord des photos dans une série.",
+      "fields": {
+        "photo": "Photographie",
+        "format": "Format",
+        "paper": "Papier et finition",
+        "editionSize": "Taille de l'édition",
+        "editionNumber": "Numéro de cet exemplaire",
+        "price": "Prix TTC (€)",
+        "status": "Statut",
+        "note": "Note visible sous le tirage"
+      },
+      "status": { "AVAILABLE": "Prêt à expédier", "RESERVED": "Réservé", "SOLD": "Vendu", "HIDDEN": "Masqué" },
+      "edition": "éd. {size} · n° {n}"
+    },
+    "pages": {
+      "title": "Pages du site",
+      "lead": "Les textes et photos des pages fixes. Les séries et les tirages se gèrent dans leurs rubriques.",
+      "tabs": { "home": "Accueil", "contact": "Contact", "shop": "Boutique", "legal": "Mentions légales et CGV" },
+      "home": {
+        "hero": "Photo d'accueil (hero)",
+        "heroHint": "16:9, plein écran. Choisissez une image lisible avec le menu en blanc par-dessus.",
+        "heroText": "Phrase d'accueil",
+        "heroCta": "Texte du bouton",
+        "intro": "Présentation",
+        "introStrong": "Phrase forte (colonne de gauche)",
+        "introBody": "Paragraphes (colonne de droite, ligne vide entre deux paragraphes)",
+        "atelier": "Photo de l'atelier",
+        "atelierCaption": "Légende",
+        "prints": "Section tirages",
+        "printsTitle": "Titre",
+        "printsText": "Texte",
+        "values": "La démarche · trois points",
+        "mark": "Repère",
+        "valueTitle": "Titre",
+        "valueText": "Texte",
+        "invite": "Invitation",
+        "inviteTitle": "Titre",
+        "inviteText": "Texte",
+        "choosePhoto": "Choisir une photo",
+        "noPhoto": "Aucune photo",
+        "fromSeries": "Depuis une série",
+        "uploadNew": "Téléverser une nouvelle photo (hors série)"
+      },
+      "contact": { "title": "Titre", "text": "Texte", "subjects": "Sujets proposés dans le formulaire (un par ligne)" },
+      "shop": { "lead": "Texte d'introduction de la boutique", "orderNote": "Note sous le bouton de demande" },
+      "legal": { "mentions": "Mentions légales", "cgv": "Conditions générales de vente", "privacy": "Politique de confidentialité" }
+    },
+    "infos": {
+      "title": "Mes informations",
+      "lead": "Ce qui s'affiche sur la page contact et dans le pied de page.",
+      "identity": "Identité",
+      "contact": "Contact",
+      "shop": "Boutique",
+      "fields": {
+        "displayName": "Nom affiché",
+        "tagline": "Mention sous le nom",
+        "city": "Ville / atelier affiché",
+        "email": "Email affiché",
+        "notifyEmail": "Email qui reçoit les messages du site",
+        "phone": "Téléphone (vide : non affiché)",
+        "instagram": "Instagram",
+        "replyDelay": "Délai de réponse annoncé",
+        "shippingDelay": "Délai d'expédition annoncé",
+        "shippingZones": "Zones livrées",
+        "shippingFees": "Frais de port"
+      }
+    },
+    "messages": {
+      "title": "Messages",
+      "lead": "Messages du formulaire et demandes de tirage. Ils vous sont aussi envoyés par email.",
+      "empty": "Aucun message.",
+      "kind": { "CONTACT": "Contact", "ORDER": "Demande de tirage" },
+      "status": { "NEW": "Nouveau", "ANSWERED": "Répondu", "ARCHIVED": "Archivé" },
+      "markAnswered": "Marquer répondu",
+      "archive": "Archiver",
+      "reply": "Répondre par email",
+      "tirage": "Tirage demandé"
+    },
+    "account": {
+      "title": "Mon compte",
+      "lead": "Votre identifiant de connexion et votre mot de passe.",
+      "email": "Identifiant (email)",
+      "name": "Prénom affiché dans l'admin",
+      "current": "Mot de passe actuel",
+      "next": "Nouveau mot de passe",
+      "confirm": "Confirmer le nouveau mot de passe",
+      "changed": "Mot de passe modifié."
+    }
+  },
+  "permissions": {
+    "content": {
+      "page": { "read": "Consulter les pages", "write": "Modifier les pages", "publish": "Publier les pages" }
+    },
+    "users": { "account": { "read": "Consulter les comptes", "write": "Modifier les comptes" } },
+    "settings": { "site": { "write": "Modifier les paramètres du site" } },
+    "system": { "audit": { "read": "Consulter le journal d'audit" } }
+  },
+  "roles": { "admin": "Administrateur", "editor": "Éditeur", "viewer": "Lecteur" }
+}
