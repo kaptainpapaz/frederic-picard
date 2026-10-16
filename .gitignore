@@ -15,6 +15,8 @@ next-env.d.ts
 *.sqlite3
 
 # Regle G1 : les fichiers televerses vivent dans un volume, jamais sous git.
+# Slash initial OBLIGATOIRE : `uploads/` sans slash ignorerait aussi src/app/uploads/
+# (la route qui sert les images), ce qui a casse les images en production le 2026-10-16.
 /uploads/
 /public/uploads/
 
@@ -27,5 +29,3 @@ next-env.d.ts
 /logs/
 /src/generated/
 
-# Règle G1 : fichiers téléversés hors du dépôt
-uploads/
