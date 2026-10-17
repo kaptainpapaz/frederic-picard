@@ -4,7 +4,7 @@
  */
 import { UPLOADS_PREFIX } from '@/lib/uploads'
 
-export const VARIANT_WIDTHS = [1920, 1280, 640] as const
+export const VARIANT_WIDTHS = [2560, 1920, 1280, 640] as const
 export type VariantWidth = (typeof VARIANT_WIDTHS)[number]
 
 export function variantUrl(fileKey: string, width: VariantWidth): string {

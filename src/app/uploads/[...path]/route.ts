@@ -14,7 +14,7 @@ import path from 'node:path'
 import { Readable } from 'node:stream'
 import { uploadsDir } from '@/lib/media'
 
-const VARIANT = /^[a-z0-9-]+-(1920|1280|640)\.webp$/
+const VARIANT = /^[a-z0-9-]+-(2560|1920|1280|640)\.webp$/
 
 export async function GET(_request: Request, context: { params: Promise<{ path: string[] }> }) {
   const { path: segments } = await context.params

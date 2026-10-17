@@ -63,6 +63,7 @@ COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
 COPY --from=builder /app/src/lib ./src/lib
 COPY --from=builder /app/src/generated ./src/generated
+COPY --from=builder /app/scripts ./scripts
 
 # Le volume des médias (règle G1) doit appartenir à l'utilisateur qui écrit.
 RUN mkdir -p /app/uploads && chown nextjs:nodejs /app/uploads

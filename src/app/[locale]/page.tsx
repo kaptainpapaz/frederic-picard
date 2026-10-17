@@ -26,9 +26,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <section id="hero" className="relative h-[clamp(420px,72vh,720px)] bg-[oklch(0.3_0.02_60)] text-white md:h-[clamp(480px,88vh,920px)]">
         {hero ? (
           <img
-            src={variantUrl(hero.fileKey, 1920)}
+            src={variantUrl(hero.fileKey, 2560)}
             srcSet={srcSet(hero.fileKey)}
-            sizes="100vw"
+            // Sur mobile le hero est plus haut que large : la photo 16:9 est agrandie par la
+            // hauteur, soit ~2,8 fois la largeur de l'écran. Sans ce sizes, le navigateur
+            // choisit une variante trop petite et l'image est floue.
+            sizes="(max-width: 768px) 280vw, 100vw"
             alt={hero.title}
             className="absolute inset-0 h-full w-full object-cover"
             style={{ objectPosition: `${Math.round(home.heroFocusX * 100)}% ${Math.round(home.heroFocusY * 100)}%` }}

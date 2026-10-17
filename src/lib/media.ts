@@ -7,6 +7,7 @@
  *
  * Convention de fichiers, pour une clé K :
  *   K-orig.<ext>     l'original tel que reçu (jamais modifié, sert à recadrer à nouveau)
+ *   K-2560.webp      variante 16:9, 2560 × 1440 (écrans Retina, hero mobile agrandi par la hauteur)
  *   K-1920.webp      variante 16:9, 1920 × 1080
  *   K-1280.webp      variante 16:9, 1280 × 720
  *   K-640.webp       variante 16:9, 640 × 360
@@ -74,7 +75,9 @@ async function readOriginal(fileKey: string): Promise<Buffer> {
 }
 
 /**
- * Génère les trois variantes 16:9 depuis l'original, centrées sur (cropX, cropY).
+ * Génère les variantes 16:9 depuis l'original, centrées sur (cropX, cropY). Jamais
+ * d'agrandissement : un original plus petit que la variante donne un fichier à sa taille
+ * native (agrandir n'ajoute que des octets, pas de netteté).
  * Relançable à volonté : un nouveau recadrage écrase les variantes précédentes.
  */
 export async function generateVariants(fileKey: string, cropX = 0.5, cropY = 0.5): Promise<void> {
@@ -100,8 +103,8 @@ export async function generateVariants(fileKey: string, cropX = 0.5, cropY = 0.5
     const height = Math.round((width * 9) / 16)
     const out = await sharp(original)
       .extract({ left, top, width: cw, height: ch })
-      .resize(width, height, { fit: 'fill', withoutEnlargement: false })
-      .webp({ quality: width === 1920 ? 82 : 78 })
+      .resize(width, height, { fit: 'fill', withoutEnlargement: true })
+      .webp({ quality: width >= 1920 ? 86 : 82 })
       .toBuffer()
     await writeFile(path.join(dir, `${fileKey}-${width}.webp`), out)
   }

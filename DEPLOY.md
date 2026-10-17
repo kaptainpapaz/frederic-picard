@@ -73,3 +73,10 @@ ssh vps "ss -tlnp | grep 5432"
 ## 3. Sauvegarde
 
 Le volume `frederic-picard_uploads` contient les originaux des photos : à ajouter au périmètre de sauvegarde avec `pgdata` (règle D1), via `scripts/backup-db.sh` du projet et le cron du VPS.
+
+## 4. Régénérer les variantes d'images
+
+Après un changement de tailles ou de qualité dans `src/lib/media.ts`, une fois le conteneur redéployé :
+```
+ssh vps "cd /var/docker-sites/frederic-picard && sudo docker compose exec web node node_modules/tsx/dist/cli.mjs scripts/regenerate-variants.ts"
+```

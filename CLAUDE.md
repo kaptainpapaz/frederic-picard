@@ -43,7 +43,7 @@ src/app/admin/           connexion (publique) et (protected)/ : accueil, series,
 src/app/uploads/         route qui sert les variantes d'images depuis UPLOADS_DIR
 src/actions/             public.ts (contact, demande de tirage), auth.ts, series.ts, photos.ts, tirages.ts, content.ts
 src/lib/content.ts       textes des pages et informations (JSON validé Zod dans SiteContent), défauts posés par le seed
-src/lib/media.ts         stockage, recadrage 16:9, variantes 1920/1280/640 webp ; media-urls.ts = URLs seules (client)
+src/lib/media.ts         stockage, recadrage 16:9, variantes 2560/1920/1280/640 webp (jamais agrandies) ; media-urls.ts = URLs seules (client)
 src/lib/queries.ts       lectures du site public
 src/lib/revalidate.ts    invalidation ISR, un seul point (règle F5)
 src/components/site/     en-tête (transparent sur le hero), Picture 16:9, formulaires publics
@@ -52,7 +52,7 @@ prisma/                  schéma et migrations ; seed idempotent
 ```
 
 **Conventions propres à ce projet**
-- Toute image du site est en 16:9. Le recadrage est un centre (cropX, cropY) appliqué à l'original ; changer le recadrage régénère les trois variantes sous la même clé.
+- Toute image du site est en 16:9. Le recadrage est un centre (cropX, cropY) appliqué à l'original ; changer le recadrage régénère les variantes sous la même clé ; `scripts/regenerate-variants.ts` les refait toutes après un changement de tailles ou de qualité.
 - Les textes de contenu (hero, présentation, démarche, pages légales, coordonnées) sont du contenu client dans `SiteContent`, pas des libellés : ils ne passent pas par `messages/fr.json`. Les libellés d'interface, eux, y passent tous (règle H3).
 - Les pages publiques exportent `revalidate = 3600` et un `generateStaticParams` vide : rien n'est pré-rendu au build, tout se construit à la première visite et se cache. L'admin invalide via `revalidatePublic()`.
 - Montants en centimes (`priceCents`), jamais en flottant.
@@ -67,7 +67,7 @@ prisma/                  schéma et migrations ; seed idempotent
 4. Les emails automatiques ne partent **qu'à Fred** (`identity.notifyEmail`). Aucun email ne part vers un visiteur tant que Fred n'a pas validé un texte (règle F2). La confirmation au visiteur est affichée à l'écran.
 5. Le formulaire de contact et la demande de tirage sont limités à 5 messages par IP et par heure (`clientIp`, règle E6) et portent un champ piège `website` qui doit rester vide.
 6. Le seed ne pose le mot de passe initial que si le compte n'en a pas. Il ne réécrit jamais un contenu existant dans `SiteContent`.
-7. Les fichiers originaux ne sont jamais servis : seules les variantes `-1920/-1280/-640.webp` sortent par `/uploads/`.
+7. Les fichiers originaux ne sont jamais servis : seules les variantes `-2560/-1920/-1280/-640.webp` sortent par `/uploads/`.
 
 ---
 
@@ -114,4 +114,3 @@ Les trois par défaut (site public, données, emails), plus :
 - **2026-10-16, revalidation ISR** : `revalidatePath('/fr', 'layout')` n'invalide pas les pages d'un segment dynamique ; il faut le motif `revalidatePath('/[locale]', 'layout')`. Symptôme : la boutique restait sur sa version en cache après l'ajout d'un tirage, sans erreur. Corrigé dans `src/lib/revalidate.ts`.
 - **2026-10-16, `output: 'standalone'` en local** : le serveur standalone ne sert pas `.next/static` ni `public/` s'ils ne sont pas copiés à côté (`.next/standalone/.next/static`, `.next/standalone/public`). Sans eux, les composants client ne s'hydratent pas et aucun bouton `onClick` ne réagit, sans erreur serveur. Le `Dockerfile` fait ces copies ; en local, `npm run start` les évite.
 - **2026-10-16, outillage dans l'image Docker** : copier `prisma` et `tsx` à la pièce depuis le builder casse au démarrage, deux fois de suite (`COPY` d'un symlink `.bin/prisma` → `Cannot find module './cli.js'` ; puis `@prisma/config` → `Cannot find module 'effect'`). Prisma 7.10 a un arbre de dépendances profond. Correction : étape `tooling` avec `npm ci --omit=dev`, prisma et tsx déclarés en `dependencies`, et les CLI appelés par leur chemin réel (`node node_modules/prisma/build/index.js`, `node node_modules/tsx/dist/cli.mjs`). Coût : image plus lourde (~1 Go). À remonter dans le starter du socle.
-- **2026-10-16, `.gitignore` et dossier de code homonyme** : la ligne `uploads/` (sans slash initial) ignorait aussi `src/app/uploads/`, la route qui sert les images. Le site local marchait (fichier sur le disque), la production clonée depuis GitHub renvoyait la 404 de Next sur chaque image, sans aucune erreur de build ni de démarrage. Règle : un motif de `.gitignore` visant un dossier de données porte un slash initial (`/uploads/`), et le premier déploiement vérifie une image, pas seulement la page.
