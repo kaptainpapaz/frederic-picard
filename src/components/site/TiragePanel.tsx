@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useTransition } from 'react'
 import { useTranslations } from 'next-intl'
 import { requestTirage } from '@/actions/public'
 import { Field } from '@/components/site/ContactForm'
+import { Lightbox } from '@/components/site/Lightbox'
 import { srcSet, variantUrl } from '@/lib/media-urls'
 import type { ActionResult } from '@/lib/result'
 
@@ -23,12 +24,16 @@ export type TirageCard = {
 /**
  * Boutique : grille des tirages et panneau de demande (un tirage = une demande par email).
  * Pas de panier, pas de paiement : décision du 2026-10-16.
+ * Un clic sur la photo l'ouvre en plein écran (lot 8, 2026-10-17) ; de là, un tirage
+ * disponible mène au panneau de demande. Un clic sur le texte de la carte y mène directement.
  */
 export function TirageGrid({ items, series, orderNote }: { items: TirageCard[]; series: string[]; orderNote: string }) {
   const t = useTranslations('shop')
   const [filter, setFilter] = useState<string>('all')
   const [open, setOpen] = useState<TirageCard | null>(null)
+  const [view, setView] = useState<number | null>(null)
   const shown = items.filter((i) => filter === 'all' || i.serie === filter)
+  const viewed = view !== null ? shown[view] : null
 
   return (
     <>
@@ -50,32 +55,60 @@ export function TirageGrid({ items, series, orderNote }: { items: TirageCard[]; 
       {shown.length === 0 ? <p className="py-12 text-muted-foreground">{t('empty')}</p> : null}
 
       <div className="grid gap-x-8 gap-y-10 pb-24 md:grid-cols-2 lg:grid-cols-3">
-        {shown.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => item.status === 'AVAILABLE' && setOpen(item)}
-            className="grid gap-2.5 text-left disabled:cursor-default"
-            disabled={item.status !== 'AVAILABLE'}
-          >
-            <div className="frame">
+        {shown.map((item, i) => (
+          <div key={item.id} className="grid gap-2.5">
+            <button type="button" onClick={() => setView(i)} className="frame w-full cursor-zoom-in" aria-label={t('view', { title: item.title })}>
               <img src={variantUrl(item.fileKey, 1280)} srcSet={srcSet(item.fileKey)} sizes="(max-width: 768px) 100vw, 33vw" alt={item.title} loading="lazy" />
-            </div>
-            <div className="flex items-baseline justify-between gap-3">
-              <h3 className="font-display text-2xl">{item.title}</h3>
-              <span className="whitespace-nowrap">{item.price}</span>
-            </div>
-            <div className="flex flex-wrap gap-x-3.5 gap-y-1 text-xs text-muted-foreground">
-              <span>{item.serie}</span>
-              <span>{item.format}</span>
-              <span>{item.edition}</span>
-              <span className={`text-[10px] tracking-[0.14em] uppercase ${item.status === 'AVAILABLE' ? 'text-accent' : 'text-destructive'}`}>
-                {t(`status.${item.status}`)}
-              </span>
-            </div>
-          </button>
+            </button>
+            <button
+              type="button"
+              onClick={() => item.status === 'AVAILABLE' && setOpen(item)}
+              className="grid gap-2.5 text-left disabled:cursor-default"
+              disabled={item.status !== 'AVAILABLE'}
+            >
+              <div className="flex items-baseline justify-between gap-3">
+                <h3 className="font-display text-2xl">{item.title}</h3>
+                <span className="whitespace-nowrap">{item.price}</span>
+              </div>
+              <div className="flex flex-wrap gap-x-3.5 gap-y-1 text-xs text-muted-foreground">
+                <span>{item.serie}</span>
+                <span>{item.format}</span>
+                <span>{item.edition}</span>
+                <span className={`text-[10px] tracking-[0.14em] uppercase ${item.status === 'AVAILABLE' ? 'text-accent' : 'text-destructive'}`}>
+                  {t(`status.${item.status}`)}
+                </span>
+              </div>
+            </button>
+          </div>
         ))}
       </div>
+
+      {viewed ? (
+        <Lightbox
+          items={shown.map((x) => ({ fileKey: x.fileKey, title: x.title, caption: [x.serie, x.format, x.edition].filter(Boolean).join(' · ') }))}
+          index={view as number}
+          onClose={() => setView(null)}
+          onChange={setView}
+        >
+          <div className="flex items-center gap-4">
+            <span className={`text-[10px] tracking-[0.14em] uppercase ${viewed.status === 'AVAILABLE' ? 'text-white/70' : 'text-white/50'}`}>
+              {viewed.price} · {t(`status.${viewed.status}`)}
+            </span>
+            {viewed.status === 'AVAILABLE' ? (
+              <button
+                type="button"
+                className="border border-white/60 px-3.5 py-2 text-xs tracking-[0.1em] uppercase hover:border-white"
+                onClick={() => {
+                  setView(null)
+                  setOpen(viewed)
+                }}
+              >
+                {t('request')}
+              </button>
+            ) : null}
+          </div>
+        </Lightbox>
+      ) : null}
 
       {open ? <OrderPanel item={open} orderNote={orderNote} onClose={() => setOpen(null)} /> : null}
     </>

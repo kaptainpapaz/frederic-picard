@@ -35,7 +35,8 @@
     "back": "Toutes les séries",
     "meta": "Série · {year} · {status, select, ONGOING {en cours} other {{count, plural, =1 {1 photographie} other {# photographies}}}}",
     "printsOfSerie": "Tirages de cette série",
-    "printAvailable": "tirage disponible"
+    "printAvailable": "tirage disponible",
+    "open": "Voir « {title} » en grand"
   },
   "shop": {
     "eyebrow": "Boutique",
@@ -49,8 +50,15 @@
       "SOLD": "Vendu"
     },
     "close": "Fermer",
+    "view": "Voir « {title} » en grand",
     "request": "Demander ce tirage",
     "requested": "Votre demande est envoyée. Frédéric vous répond par email."
+  },
+  "lightbox": {
+    "close": "Fermer",
+    "prev": "Photo précédente",
+    "next": "Photo suivante",
+    "counter": "{n} / {total}"
   },
   "contact": {
     "title": "Contact",

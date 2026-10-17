@@ -46,7 +46,7 @@ src/lib/content.ts       textes des pages et informations (JSON validé Zod dans
 src/lib/media.ts         stockage, recadrage 16:9, variantes 2560/1920/1280/640 webp (jamais agrandies) ; media-urls.ts = URLs seules (client)
 src/lib/queries.ts       lectures du site public
 src/lib/revalidate.ts    invalidation ISR, un seul point (règle F5)
-src/components/site/     en-tête (transparent sur le hero), Picture 16:9, formulaires publics
+src/components/site/     en-tête (transparent sur le hero), Picture 16:9, Lightbox (plein écran, séries et boutique), formulaires publics
 src/components/admin/    ActionForm (onClick, jamais onSubmit), PhotoManager, formulaires série et tirage
 prisma/                  schéma et migrations ; seed idempotent
 ```
