@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { saveContent } from '@/actions/content'
 import { ActionForm, Field } from '@/components/admin/ActionForm'
 import { Card, PageHeader } from '@/components/admin/PageHeader'
+import { HeroPicker } from '@/components/admin/HeroPicker'
 import { PhotoManager } from '@/components/admin/PhotoManager'
 import { getContent } from '@/lib/content'
 import { prisma } from '@/lib/db'
@@ -43,7 +44,6 @@ async function HomeTab() {
     prisma.photo.findMany({ orderBy: [{ serie: { order: 'asc' } }, { order: 'asc' }], include: { serie: { select: { title: true } } } }),
     prisma.photo.findMany({ where: { serieId: null }, orderBy: { order: 'asc' } }),
   ])
-  const hero = photos.find((p) => p.id === home.heroPhotoId)
   const atelier = photos.find((p) => p.id === home.atelierPhotoId)
   const values = [0, 1, 2].map((i) => home.values[i] ?? { mark: '', title: '', text: '' })
 
@@ -52,10 +52,14 @@ async function HomeTab() {
       <ActionForm action={saveContent.bind(null, 'home')}>
         <div className="grid gap-5 md:grid-cols-2">
           <Card title={t('hero')}>
-            <div className="frame">{hero ? <img src={variantUrl(hero.fileKey, 1280)} alt="" /> : null}</div>
-            <Field label={t('choosePhoto')} name="heroPhotoId" hint={t('heroHint')}>
-              <PhotoSelect name="heroPhotoId" value={home.heroPhotoId} photos={photos} none={t('noPhoto')} />
-            </Field>
+            <HeroPicker
+              photos={photos.map((p) => ({ id: p.id, fileKey: p.fileKey, label: `${p.serie ? `${p.serie.title} · ` : ''}${p.title || p.id}` }))}
+              photoId={home.heroPhotoId}
+              focusX={home.heroFocusX}
+              focusY={home.heroFocusY}
+              heroText={home.heroText}
+              none={t('noPhoto')}
+            />
             <Field label={t('heroText')} name="heroText">
               <textarea name="heroText" defaultValue={home.heroText} className="field min-h-[80px]" />
             </Field>

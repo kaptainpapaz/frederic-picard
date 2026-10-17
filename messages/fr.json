@@ -238,6 +238,11 @@
       "home": {
         "hero": "Photo d'accueil (hero)",
         "heroHint": "16:9, plein écran. Choisissez une image lisible avec le menu en blanc par-dessus.",
+        "previewDesktop": "Ordinateur",
+        "previewMobile": "Mobile",
+        "focusX": "Point d'intérêt, horizontal",
+        "focusY": "Point d'intérêt, vertical",
+        "focusHint": "Sur mobile, l'écran ne montre qu'une bande de la photo. Les curseurs déplacent cette bande ; l'aperçu est à l'échelle, enregistrez pour appliquer.",
         "heroText": "Phrase d'accueil",
         "heroCta": "Texte du bouton",
         "intro": "Présentation",

@@ -19,6 +19,8 @@ function fromForm(key: ContentKey, fd: FormData): unknown {
     case 'home':
       return {
         heroPhotoId: str(fd, 'heroPhotoId') || null,
+        heroFocusX: str(fd, 'heroFocusX') || 0.5,
+        heroFocusY: str(fd, 'heroFocusY') || 0.5,
         heroText: str(fd, 'heroText'),
         heroCta: str(fd, 'heroCta'),
         introStrong: str(fd, 'introStrong'),

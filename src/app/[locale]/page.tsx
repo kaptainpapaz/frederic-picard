@@ -22,7 +22,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   return (
     <SiteShell overHero>
       {/* Hero pleine largeur, sous l'en-tête transparent. L'id "hero" sert de seuil à l'en-tête. */}
-      <section id="hero" className="relative h-[clamp(480px,88vh,920px)] bg-[oklch(0.3_0.02_60)] text-white">
+      {/* Hauteur réduite sur mobile (écran vertical) pour couper moins la photo 16:9 ; le point d'intérêt choisi dans l'admin fixe ce qui reste visible. */}
+      <section id="hero" className="relative h-[clamp(420px,72vh,720px)] bg-[oklch(0.3_0.02_60)] text-white md:h-[clamp(480px,88vh,920px)]">
         {hero ? (
           <img
             src={variantUrl(hero.fileKey, 1920)}
@@ -30,6 +31,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             sizes="100vw"
             alt={hero.title}
             className="absolute inset-0 h-full w-full object-cover"
+            style={{ objectPosition: `${Math.round(home.heroFocusX * 100)}% ${Math.round(home.heroFocusY * 100)}%` }}
             fetchPriority="high"
           />
         ) : null}

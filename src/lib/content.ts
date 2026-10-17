@@ -28,6 +28,9 @@ export type Identity = z.infer<typeof identitySchema>
 
 export const homeSchema = z.object({
   heroPhotoId: z.string().nullable(),
+  /** Point d'intérêt du hero (0 à 1), appliqué en object-position : décide ce qui reste visible quand l'écran coupe la photo (mobile). */
+  heroFocusX: z.coerce.number().min(0).max(1).default(0.5),
+  heroFocusY: z.coerce.number().min(0).max(1).default(0.5),
   heroText: z.string().trim().max(300),
   heroCta: z.string().trim().max(60),
   introStrong: z.string().trim().max(600),
@@ -89,6 +92,8 @@ export const DEFAULTS: { [K in ContentKey]: z.infer<(typeof CONTENT)[K]> } = {
   },
   home: {
     heroPhotoId: null,
+    heroFocusX: 0.5,
+    heroFocusY: 0.5,
     heroText:
       'Frédéric Picard photographie ce qui se passe quand on ne pose pas. Séries au long cours, tirages signés et numérotés.',
     heroCta: 'Découvrir les séries',
